@@ -11,10 +11,8 @@ beginner-friendly UI. After using this app, users will be able to do the followi
 - Visually record fitness results using free charts.
 - Enjoy ease of use with a simple and sophisticated user interface that hides
 unnecessary information as much as possible.
+
 We want the following people to use our app:
-●
-People who do strength training and weightlifting
-●
-People who want to balance nutrition management, sleep, and exercise
-●
-People who dislike complicated diet and fitness apps.
+- People who do strength training and weightlifting
+- People who want to balance nutrition management, sleep, and exercise
+- People who dislike complicated diet and fitness apps.
