@@ -16,3 +16,11 @@ We want the following people to use our app:
 - People who do strength training and weightlifting
 - People who want to balance nutrition management, sleep, and exercise
 - People who dislike complicated diet and fitness apps.
+
+# Group Members 
+- May Nguyen (mnguye21@uoguelph.ca)
+- Amirhossein Hasrati (ahasrati@uoguelph.ca)
+- Nikolett Toth (ntoth@uoguelph.ca)
+- Jerry You (jyou04@uoguelph.ca)
+- Samuel Joseph (sjosep08@uoguelph.ca)
+- Ivan Karlov (ikarlov@uoguelph.ca)
