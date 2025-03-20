@@ -3,7 +3,7 @@ import 'package:lipht/features/auth/screens/login_screen.dart';
 import 'package:lipht/features/auth/screens/signup_screen.dart';
 import 'package:lipht/presentation/screens/main_layout.dart';
 import 'package:lipht/features/settings/screens/settings_screen.dart';
-import 'package:lipht/features/build/screens/build_program_screen.dart';
+import 'package:lipht/features/build/screens/build_screen.dart';
 import 'package:lipht/routes/routes.dart';
 
 class AppRouter {
@@ -49,7 +49,7 @@ class AppRouter {
         return MaterialPageRoute(
           builder: (_) => MainLayout(
             currentIndex: 1,
-            child: BuildProgramScreen(),
+            child: BuildScreen(),
           ),
         );
       default:
