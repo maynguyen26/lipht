@@ -65,11 +65,11 @@ class FriendsScreen extends StatelessWidget {
               child: ListView(
                 children: [
                   _buildUserRow("Jerry", "275lbs"),
-                  _buildUserRow("Nicolette", "1000g"),
-                  _buildUserRow("May", "85g"),
-                  _buildUserRow("Amir", "55g"),
-                  _buildUserRow("Ivan", "300g"),
-                  _buildUserRow("Majd", "7500lbs")
+                  _buildUserRow("Nicolette", "100lbs"),
+                  _buildUserRow("May", "85lbs"),
+                  _buildUserRow("Amir", "55lbs"),
+                  _buildUserRow("Ivan", "20lbs"),
+                  _buildUserRow("Majd", "750lbs")
                 ],
               ),
             ),
