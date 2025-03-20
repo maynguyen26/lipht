@@ -1,0 +1,38 @@
+{
+  "flutter": {
+    "platforms": {
+      "android": {
+        "default": {
+          "projectId": "lipht-fitness",
+          "appId": "1:917606280323:android:2d5ebf3ce0486c8bdaffb6",
+          "fileOutput": "android/app/google-services.json"
+        }
+      },
+      "ios": {
+        "default": {
+          "projectId": "lipht-fitness",
+          "appId": "1:917606280323:ios:c5d66fd9ee229a03daffb6",
+          "uploadDebugSymbols": false,
+          "fileOutput": "ios/Runner/GoogleService-Info.plist"
+        }
+      },
+      "dart": {
+        "lib/firebase_options.dart": {
+          "projectId": "lipht-fitness",
+          "configurations": {
+            "android": "1:917606280323:android:2d5ebf3ce0486c8bdaffb6",
+            "ios": "1:917606280323:ios:c5d66fd9ee229a03daffb6"
+          }
+        }
+      }
+    }
+  },
+  "emulators": {
+    "dataconnect": {
+      "dataDir": "dataconnect/.dataconnect/pgliteData"
+    }
+  },
+  "dataconnect": {
+    "source": "dataconnect"
+  }
+}
