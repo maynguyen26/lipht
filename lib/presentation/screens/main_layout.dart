@@ -85,12 +85,27 @@ class _MainLayoutState extends State<MainLayout> {
         centerTitle: false,
         titleSpacing: 30,
         toolbarHeight: 80,
-        title: const Text(
-          'LIPHT',
-          style: TextStyle(
-            color: Color(0xFFDDA7F6),
-            fontWeight: FontWeight.bold,
-          ),
+        title: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const Text(
+              'LIPHT',
+              style: TextStyle(
+                fontFamily: 'Montserrat',
+                color: Color(0xFFDDA7F6),
+                fontWeight: FontWeight.w800,
+              ),
+            ),
+            Transform(
+              alignment: Alignment.center,
+              transform: Matrix4.rotationY(3.14159), 
+              child: Icon(
+                Icons.fitness_center,
+                color: const Color(0xFFDDA7F6),
+                grade: 900, 
+              ),
+            ),
+          ],
         ),
         actions: [
           Padding(
