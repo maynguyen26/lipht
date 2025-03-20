@@ -4,6 +4,7 @@ import 'package:lipht/providers/auth_provider.dart';
 import 'package:lipht/presentation/widgets/bottom_nav_bar.dart';
 import 'package:lipht/features/home/screens/home_screen.dart';
 import 'package:lipht/features/build/screens/build_screen.dart';
+import 'package:lipht/features/sleep/screens/sleep_screen.dart';
 import 'package:lipht/routes/routes.dart';
 // Import other screen files when you create them
 // import 'package:lipht/features/fuel/screens/fuel_screen.dart';
@@ -81,6 +82,8 @@ class _MainLayoutState extends State<MainLayout> {
         backgroundColor: const Color(0xFFF9EDFF),
         elevation: 0,
         centerTitle: false,
+        titleSpacing: 30,
+        toolbarHeight: 80,
         title: const Text(
           'LIPHT',
           style: TextStyle(
@@ -89,13 +92,16 @@ class _MainLayoutState extends State<MainLayout> {
           ),
         ),
         actions: [
-          IconButton(
-            icon: const Icon(Icons.settings),
-            color: const Color(0xFFDDA7F6),
-            onPressed: () {
-              Navigator.of(context).pushNamed(Routes.settings);
-              debugPrint('Settings button pressed');
-            },
+          Padding(
+            padding: const EdgeInsets.only(right: 30.0), 
+            child: IconButton(
+              icon: const Icon(Icons.settings_outlined, size: 30),
+              color: const Color(0xFFDDA7F6),
+              onPressed: () {
+                Navigator.of(context).pushNamed(Routes.settings);
+                debugPrint('Settings button pressed');
+              },
+            ),
           ),
         ],
         automaticallyImplyLeading: false,
@@ -114,7 +120,7 @@ class _MainLayoutState extends State<MainLayout> {
       HomeScreen(),
       _buildBuildTabWithAnimation(),
       Center(child: Text('Fuel Screen')),
-      Center(child: Text('Sleep Screen')),
+      SleepScreen(),
       Center(child: Text('Friends Screen')),
     ];
 
