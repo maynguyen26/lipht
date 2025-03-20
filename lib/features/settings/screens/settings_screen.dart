@@ -1,25 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:lipht/features/friends/screens/friends_screen.dart';
+import 'package:lipht/features/settings/widgets/index.dart';
 import 'package:provider/provider.dart';
 import 'package:lipht/providers/auth_provider.dart';
-import 'package:lipht/presentation/widgets/bottom_nav_bar.dart';
-import 'package:lipht/features/home/screens/home_screen.dart';
-import 'package:lipht/features/build/screens/build_screen.dart';
-import 'package:lipht/features/sleep/screens/sleep_screen.dart';
 import 'package:lipht/routes/routes.dart';
-// Import other screen files when you create them
-// import 'package:lipht/features/fuel/screens/fuel_screen.dart';
-// import 'package:lipht/features/sleep/screens/sleep_screen.dart';
-// import 'package:lipht/features/friends/screens/friends_screen.dart';
 
 class SettingsScreen extends StatefulWidget {
-  final int currentIndex;
-  final Widget? child; // Optional child widget to display
-
   const SettingsScreen({
     Key? key,
-    this.currentIndex = 0, // Default to home tab
-    this.child,
   }) : super(key: key);
 
   @override
@@ -27,9 +14,14 @@ class SettingsScreen extends StatefulWidget {
 }
 
 class _SettingsScreenState extends State<SettingsScreen> {
+  bool _aiMealAnalysisEnabled = false;
+  bool _privateModeEnabled = false;
   
   @override
   Widget build(BuildContext context) {
+    final authProvider = Provider.of<AuthProvider>(context);
+    final user = authProvider.user;
+
     return Scaffold(
       backgroundColor: const Color(0xFFF9EDFF),
       appBar: AppBar(
@@ -52,68 +44,166 @@ class _SettingsScreenState extends State<SettingsScreen> {
             Transform(
               alignment: Alignment.center,
               transform: Matrix4.rotationY(3.14159), 
-              child: Icon(
+              child: const Icon(
                 Icons.fitness_center,
-                color: const Color(0xFFDDA7F6),
+                color: Color(0xFFDDA7F6),
                 grade: 900, 
               ),
             ),
           ],
         ),
+        actions: [
+          Padding(
+            padding: const EdgeInsets.only(right: 16.0),
+            child: IconButton(
+              icon: const Icon(
+                Icons.settings_outlined,
+                color: Color(0xFF9370DB),
+                size: 28,
+              ),
+              onPressed: () {},
+            ),
+          ),
+        ],
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
-          color: const Color(0xFFDDA7F6), // Back button color
+          color: const Color(0xFFDDA7F6), 
           onPressed: () {
             Navigator.of(context).pop();
           },
         ),
-        automaticallyImplyLeading: true,
+        automaticallyImplyLeading: false,
       ),
-      body: _buildBody(),
-    );
-  }
+      body: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 32.0, vertical: 24.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // Profile section
+              const Center(
+                child: Column(
+                  children: [
+                    CircleAvatar(
+                      radius: 36,
+                      backgroundColor: Color(0xFFAA77EE),
+                      child: Icon(
+                        Icons.person_outline,
+                        color: Colors.white,
+                        size: 40,
+                      ),
+                    ),
+                    SizedBox(height: 16),
+                    Text(
+                      'Settings',
+                      style: TextStyle(
+                        fontSize: 24,
+                        color: Color(0xFF9370DB),
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(height: 32),
 
-  Widget _buildBody() {
-    // Create a list of screens with the current content
-    final screens = [
-      HomeScreen(),
-      _buildBuildTabWithAnimation(),
-      Center(child: Text('Fuel Screen')),
-      SleepScreen(),
-      FriendsScreen(),
-    ];
-
-    // Use IndexedStack to maintain state across tabs
-    return IndexedStack(
-      index: _currentIndex,
-      children: screens,
-    );
-  }
-
-  // This method builds the Build tab with animation when needed
-  Widget _buildBuildTabWithAnimation() {
-    // The key part: Use AnimatedSwitcher with a key based on the child's identity
-    return AnimatedSwitcher(
-      duration: const Duration(milliseconds: 300),
-      transitionBuilder: (Widget child, Animation<double> animation) {
-        // Slide from right animation
-        return SlideTransition(
-          position: Tween<Offset>(
-            begin: const Offset(1.0, 0.0),
-            end: Offset.zero,
-          ).animate(CurvedAnimation(
-            parent: animation,
-            curve: Curves.easeOutCubic,
-          )),
-          child: child,
-        );
-      },
-      // Key is crucial for AnimatedSwitcher to detect changes
-      child: KeyedSubtree(
-        key: ValueKey(_buildTabContent.hashCode),
-        child: _buildTabContent,
+              // Settings sections with cards
+              SettingsCard(
+                title: 'Account',
+                children: [
+                  Text (
+                    user!.username,
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                      color: Color(0xFFAA77EE),
+                    ),
+                  ) ,
+                  SizedBox(height: 16),
+                  SettingsActionRow(
+                    label: "Change username", 
+                    onTap: () { 
+                      debugPrint('Settings button pressed'); 
+                    }
+                  ),
+                  const SizedBox(height: 16),
+                  SettingsActionRow(
+                    label: "Change password", 
+                    onTap: () { 
+                      debugPrint('Change password button pressed'); 
+                    }
+                  ),
+                ]
+              ),
+              
+              const SizedBox(height: 24),
+              
+              SettingsCard(
+                title: 'Privacy',
+                children: [
+                  // AI Meal Analysis toggle
+                  SettingsSwitchRow(
+                    label: 'Enable AI Meal Analysis',
+                    value: _aiMealAnalysisEnabled,
+                    onChanged: (value) {
+                      setState(() {
+                        _aiMealAnalysisEnabled = value;
+                      });
+                    },
+                  ),
+                  const SizedBox(height: 16),
+                  // Private Mode toggle
+                  SettingsSwitchRow(
+                    label: 'Private Mode',
+                    value: _privateModeEnabled,
+                    onChanged: (value) {
+                      setState(() {
+                        _privateModeEnabled = value;
+                      });
+                    },
+                  ),
+                  const SizedBox(height: 16),
+                  // Block List
+                  SettingsActionRow(
+                    label: 'View Block List',
+                    onTap: () {
+                      // Handle view block list action
+                    },
+                  ),
+                ]
+              ),
+              
+              const SizedBox(height: 24),
+              
+              SettingsCard(
+                title: 'Data Management',
+                children: [
+                  SettingsActionRow(
+                    label: 'Delete Fitness/Diet/Sleep Data',
+                    labelColor: Colors.red,
+                    onTap: () {
+                      // Handle delete data action
+                    },
+                  ),
+                ]
+              ),
+              
+              const SizedBox(height: 32),
+              
+              Center(
+                child: SignOutButton(
+                  onPressed: () async {
+                    final authProvider = Provider.of<AuthProvider>(context, listen: false);
+                    await authProvider.signOut();
+                    Navigator.of(context).pushReplacementNamed(Routes.login);
+                  },
+                ),
+              ),
+              const SizedBox(height: 40),
+            ],
+          ),
+        ),
       ),
     );
   }
 }
-
