@@ -68,7 +68,8 @@ class FriendsScreen extends StatelessWidget {
                   _buildUserRow("Nicolette", "135lbs"),
                   _buildUserRow("May", "85lbs"),
                   _buildUserRow("Amir", "55lbs"),
-                  _buildUserRow("Ivan", ".3lbs"),
+                  _buildUserRow("Ivan", "300 mg"),
+                  _buildUserRow("Majd", "7500lbs")
                 ],
               ),
             ),
