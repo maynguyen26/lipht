@@ -10,6 +10,7 @@ import 'package:lipht/features/auth/screens/login_screen.dart';
 import 'package:lipht/features/home/screens/home_screen.dart';
 import 'package:lipht/presentation/screens/main_layout.dart';
 import 'package:lipht/presentation/widgets/no_transitions_builder.dart';
+import 'package:lipht/features/fuel/screens/fuel_screen.dart';
 
 // Global navigator key for app-wide navigation
 final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();

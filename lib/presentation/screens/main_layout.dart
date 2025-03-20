@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:lipht/features/friends/screens/friends_screen.dart';
+import 'package:lipht/features/fuel/screens/fuel_screen.dart';
 import 'package:provider/provider.dart';
 import 'package:lipht/providers/auth_provider.dart';
 import 'package:lipht/presentation/widgets/bottom_nav_bar.dart';
@@ -7,10 +8,6 @@ import 'package:lipht/features/home/screens/home_screen.dart';
 import 'package:lipht/features/build/screens/build_screen.dart';
 import 'package:lipht/features/sleep/screens/sleep_screen.dart';
 import 'package:lipht/routes/routes.dart';
-// Import other screen files when you create them
-// import 'package:lipht/features/fuel/screens/fuel_screen.dart';
-// import 'package:lipht/features/sleep/screens/sleep_screen.dart';
-// import 'package:lipht/features/friends/screens/friends_screen.dart';
 
 class MainLayout extends StatefulWidget {
   final int currentIndex;
@@ -120,7 +117,7 @@ class _MainLayoutState extends State<MainLayout> {
     final screens = [
       HomeScreen(),
       _buildBuildTabWithAnimation(),
-      Center(child: Text('Fuel Screen')),
+      FuelScreen(),
       SleepScreen(),
       FriendsScreen(),
     ];
