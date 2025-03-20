@@ -20,7 +20,7 @@ class BuildScreen extends StatelessWidget {
             
             SizedBox(height: 20),
             
-            // Program buttons section in a card
+            // Pie Charts section in a card
             PieChartCard(),
             
             SizedBox(height: 20),
