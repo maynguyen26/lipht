@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:lipht/features/friends/screens/friends_screen.dart';
 import 'package:provider/provider.dart';
 import 'package:lipht/providers/auth_provider.dart';
 import 'package:lipht/presentation/widgets/bottom_nav_bar.dart';
@@ -93,7 +94,7 @@ class _MainLayoutState extends State<MainLayout> {
         ),
         actions: [
           Padding(
-            padding: const EdgeInsets.only(right: 30.0), 
+            padding: const EdgeInsets.only(right: 30.0),
             child: IconButton(
               icon: const Icon(Icons.settings_outlined, size: 30),
               color: const Color(0xFFDDA7F6),
@@ -121,7 +122,7 @@ class _MainLayoutState extends State<MainLayout> {
       _buildBuildTabWithAnimation(),
       Center(child: Text('Fuel Screen')),
       SleepScreen(),
-      Center(child: Text('Friends Screen')),
+      FriendsScreen(),
     ];
 
     // Use IndexedStack to maintain state across tabs
