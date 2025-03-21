@@ -3,6 +3,9 @@ import 'package:provider/provider.dart';
 import 'package:lipht/providers/auth_provider.dart';
 import 'package:lipht/routes/routes.dart';
 import 'package:fl_chart/fl_chart.dart';
+import 'package:lipht/features/sleep/screens/add_sleep.dart';
+import 'package:lipht/presentation/screens/main_layout.dart';
+
 
 class SleepScreen extends StatelessWidget {
   const SleepScreen({Key? key}) : super(key: key);
@@ -131,7 +134,12 @@ class SleepScreen extends StatelessWidget {
                   ),
                   ElevatedButton(
                     onPressed: () {
-                      Navigator.of(context).pushNamed(Routes.addSleep);
+                      Navigator.of(context).push(
+                        MaterialPageRoute(builder: (_) => MainLayout(
+                          currentIndex: 3,
+                          child: AddSleepScreen()
+                        )),
+                      );
                     },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.white,

@@ -133,7 +133,9 @@ class _MainLayoutState extends State<MainLayout> {
       HomeScreen(),
       _buildBuildTabWithAnimation(),
       FuelScreen(),
-      SleepScreen(),
+      widget.currentIndex == 3 && widget.child != null
+        ? widget.child!
+        : SleepScreen(),
       FriendsScreen(),
     ];
 
