@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:lipht/providers/auth_provider.dart';
-import 'package:lipht/routes/routes.dart';
+import 'package:lipht/providers/auth_provider.dart' as app_auth;
 import 'package:lipht/features/build/widgets/build_inputs/program_name_card.dart';
 import 'package:lipht/features/build/widgets/build_inputs/workout_days_selector.dart';
 import 'package:lipht/features/build/widgets/build_inputs/exercise_list_card.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 
 class BuildProgramScreen extends StatefulWidget {
@@ -16,12 +17,66 @@ class BuildProgramScreen extends StatefulWidget {
 
 class _BuildProgramScreenState extends State<BuildProgramScreen> {
   final TextEditingController _programNameController = TextEditingController();
+  final List<TextEditingController> _exerciseControllers = []; // NEW
   Set<String> _selectedDays = {};
+
+
+  Future<void> _saveProgram() async {
+    final user = FirebaseAuth.instance.currentUser;
+    if (user == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("You must be logged in to save a program.")),
+      );
+      return;
+    }
+
+    final programName = _programNameController.text.trim();
+    final exercises = _exerciseControllers
+        .map((c) => c.text.trim())
+        .where((name) => name.isNotEmpty)
+        .toList();
+
+    if (programName.isEmpty || exercises.isEmpty || _selectedDays.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("Please complete all fields.")),
+      );
+      return;
+    }
+
+    try {
+      await FirebaseFirestore.instance
+          .collection('users')
+          .doc(user.uid)
+          .collection('programs')
+          .add({
+        'name': programName,
+        'days': _selectedDays.toList(),
+        'exercises': exercises,
+        'timestamp': FieldValue.serverTimestamp(),
+      });
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("Program saved!")),
+      );
+
+      // Optional: clear the form
+      _programNameController.clear();
+      _exerciseControllers.clear();
+      _selectedDays.clear();
+      setState(() {});
+    } catch (e) {
+      print("Error: $e");
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("Failed to save program.")),
+      );
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
 
-    final authProvider = Provider.of<AuthProvider>(context);
+    final authProvider = Provider.of<app_auth.AuthProvider>(context);
+
     final user = authProvider.user;
 
     return Scaffold(
@@ -67,12 +122,12 @@ class _BuildProgramScreenState extends State<BuildProgramScreen> {
                 setState(() {
                   _selectedDays = updatedDays;
                 });
-              },
+              }, 
             ),
 
             const SizedBox(height: 5),
 
-            ExerciseListCard(),
+            ExerciseListCard(  controllers: _exerciseControllers, onSave: _saveProgram,),
 
           ],)
 

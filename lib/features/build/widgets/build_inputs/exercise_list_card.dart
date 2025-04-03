@@ -1,14 +1,20 @@
 import 'package:flutter/material.dart';
 
+import 'package:lipht/routes/routes.dart';
+
 class ExerciseListCard extends StatefulWidget {
-  const ExerciseListCard({super.key});
+  final List<TextEditingController> controllers;
+
+  final void Function() onSave;
+
+  const ExerciseListCard({super.key, required this.controllers, required this.onSave});
 
   @override
   State<ExerciseListCard> createState() => _ExerciseListCardState();
 }
 
 class _ExerciseListCardState extends State<ExerciseListCard> {
-  final List<TextEditingController> _controllers = [];
+  List<TextEditingController> get _controllers => widget.controllers;
 
   void _addNewCard() {
     setState(() {
@@ -116,11 +122,16 @@ class _ExerciseListCardState extends State<ExerciseListCard> {
                 const SizedBox(width: 12),
                 ElevatedButton(
                   onPressed: () {
-                    // TODO: handle save logic here
                     print("Saving program...");
+                    widget.onSave();
+                    Navigator.pushNamedAndRemoveUntil(
+                    context,
+                    Routes.build,
+                    (route) => false,
+                  );
                   },
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color(0xFFA764FF), // slightly softer purple
+                    backgroundColor: const Color(0xFFA764FF),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(24),
                     ),
