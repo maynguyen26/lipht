@@ -4,6 +4,9 @@ import 'package:lipht/features/auth/screens/signup_screen.dart';
 import 'package:lipht/presentation/screens/main_layout.dart';
 import 'package:lipht/features/settings/screens/settings_screen.dart';
 import 'package:lipht/features/build/screens/build_screen.dart';
+import 'package:lipht/features/build/screens/build_program_screen.dart';
+import 'package:lipht/features/build/screens/choose_program_screen.dart';
+import 'package:lipht/features/build/screens/empty_session_screen.dart';
 import 'package:lipht/routes/routes.dart';
 
 class AppRouter {
@@ -49,9 +52,26 @@ class AppRouter {
         return MaterialPageRoute(
           builder: (_) => MainLayout(
             currentIndex: 1,
-            child: BuildScreen(),
+            child: BuildProgramScreen(),
           ),
         );
+
+        case Routes.chooseProgram:
+        return MaterialPageRoute(
+          builder: (_) => const MainLayout(
+            currentIndex: 1,
+            child: ChooseProgramScreen(),
+          ),
+        );
+
+        case Routes.emptySession:
+        return MaterialPageRoute(
+          builder: (_) => const MainLayout(
+            currentIndex: 1,
+            child: EmptySessionScreen(),
+          ),
+        );
+
       default:
         return _errorRoute('No route defined for ${settings.name}');
     }
