@@ -4,6 +4,7 @@ import 'package:lipht/providers/auth_provider.dart';
 import 'package:lipht/routes/routes.dart';
 import 'package:lipht/features/build/widgets/build_inputs/program_name_card.dart';
 import 'package:lipht/features/build/widgets/build_inputs/workout_days_selector.dart';
+import 'package:lipht/features/build/widgets/build_inputs/exercise_list_card.dart';
 
 
 class BuildProgramScreen extends StatefulWidget {
@@ -50,7 +51,7 @@ class _BuildProgramScreenState extends State<BuildProgramScreen> {
         ),
       ),
 
-      body: Padding(
+      body: SingleChildScrollView(
         padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
 
         child: Column (
@@ -69,6 +70,9 @@ class _BuildProgramScreenState extends State<BuildProgramScreen> {
               },
             ),
 
+            const SizedBox(height: 5),
+
+            ExerciseListCard(),
 
           ],)
 
