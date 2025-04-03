@@ -3,6 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:intl/intl.dart';
 import '../data/food_data.dart';
+import '../screens/ai_analysis_screen.dart'; // Import the AI Analysis Screen
 
 class FuelScreen extends StatefulWidget {
   const FuelScreen({Key? key}) : super(key: key);
@@ -52,79 +53,78 @@ class _FuelScreenState extends State<FuelScreen> {
   }
 
   // Fetch meals for selected date
-// Fetch meals for selected date
-Future<void> _fetchMealsForDate(DateTime date) async {
-  setState(() {
-    _isLoading = true;
-    // Important: Clear existing meals immediately to avoid showing old data
-    _meals = {
-      'breakfast': [],
-      'lunch': [],
-      'dinner': [],
-      'snacks': []
-    };
-  });
-  
-  try {
-    final user = _auth.currentUser;
-    if (user == null) {
-      setState(() {
-        _isLoading = false;
-      });
-      return;
-    }
+  Future<void> _fetchMealsForDate(DateTime date) async {
+    setState(() {
+      _isLoading = true;
+      // Important: Clear existing meals immediately to avoid showing old data
+      _meals = {
+        'breakfast': [],
+        'lunch': [],
+        'dinner': [],
+        'snacks': []
+      };
+    });
     
-    String dateString = DateFormat('yyyy-MM-dd').format(date);
-    print('Fetching meals for date: $dateString'); // Debug log
-    
-    // Get meal logs for the date
-    final mealSnapshot = await _firestore
-        .collection('users')
-        .doc(user.uid)
-        .collection('mealLogs')
-        .where('date', isEqualTo: dateString)
-        // .orderBy('timestamp', descending: false)
-        .get();
-    
-    print('Found ${mealSnapshot.docs.length} meal items for $dateString'); // Debug log
-    
-    // Create a fresh meals map for this date
-    Map<String, List<Map<String, dynamic>>> newMeals = {
-      'breakfast': [],
-      'lunch': [],
-      'dinner': [],
-      'snacks': []
-    };
-    
-    // Sort meals by type
-    for (var doc in mealSnapshot.docs) {
-      final data = doc.data();
-      data['id'] = doc.id;
+    try {
+      final user = _auth.currentUser;
+      if (user == null) {
+        setState(() {
+          _isLoading = false;
+        });
+        return;
+      }
       
-      String mealType = data['mealType'] ?? 'breakfast';
-      if (newMeals.containsKey(mealType)) {
-        newMeals[mealType]!.add(data);
-      } else {
-        newMeals['snacks']!.add(data);
+      String dateString = DateFormat('yyyy-MM-dd').format(date);
+      print('Fetching meals for date: $dateString'); // Debug log
+      
+      // Get meal logs for the date
+      final mealSnapshot = await _firestore
+          .collection('users')
+          .doc(user.uid)
+          .collection('mealLogs')
+          .where('date', isEqualTo: dateString)
+          // .orderBy('timestamp', descending: false)
+          .get();
+      
+      print('Found ${mealSnapshot.docs.length} meal items for $dateString'); // Debug log
+      
+      // Create a fresh meals map for this date
+      Map<String, List<Map<String, dynamic>>> newMeals = {
+        'breakfast': [],
+        'lunch': [],
+        'dinner': [],
+        'snacks': []
+      };
+      
+      // Sort meals by type
+      for (var doc in mealSnapshot.docs) {
+        final data = doc.data();
+        data['id'] = doc.id;
+        
+        String mealType = data['mealType'] ?? 'breakfast';
+        if (newMeals.containsKey(mealType)) {
+          newMeals[mealType]!.add(data);
+        } else {
+          newMeals['snacks']!.add(data);
+        }
+      }
+      
+      // Only update state if the component is still mounted and the selected date hasn't changed
+      if (mounted && _selectedDate == date) {
+        setState(() {
+          _meals = newMeals;
+          _isLoading = false;
+        });
+      }
+    } catch (e) {
+      print('Error fetching meals: $e');
+      if (mounted) {
+        setState(() {
+          _isLoading = false;
+        });
       }
     }
-    
-    // Only update state if the component is still mounted and the selected date hasn't changed
-    if (mounted && _selectedDate == date) {
-      setState(() {
-        _meals = newMeals;
-        _isLoading = false;
-      });
-    }
-  } catch (e) {
-    print('Error fetching meals: $e');
-    if (mounted) {
-      setState(() {
-        _isLoading = false;
-      });
-    }
   }
-}
   
   // Function to search among the hard-coded foods
   void _searchFoodItems(String query) {
@@ -376,6 +376,20 @@ Future<void> _fetchMealsForDate(DateTime date) async {
       ),
     );
   }
+  
+  // Navigate to AI Analysis Screen
+  void _navigateToAIAnalysis() {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => AIAnalysisScreen(
+          mealData: _meals,
+          selectedDate: _selectedDate,
+          dailyTotals: _calculateDailyTotals(),
+        ),
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -448,36 +462,81 @@ Future<void> _fetchMealsForDate(DateTime date) async {
                   ),
                   SizedBox(height: 15),
                   
-                  // Daily Total
-                  Container(
-                    padding: EdgeInsets.all(12),
-                    decoration: BoxDecoration(
-                      color: Color(0xFFA764FF),
-                      borderRadius: BorderRadius.circular(15),
-                    ),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        Text(
-                          'Daily Total',
-                          style: TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.white,
+                  // Daily Total and AI Analysis button
+                  Row(
+                    children: [
+                      // Daily Total Container (modified to take less width)
+                      Expanded(
+                        flex: 3,
+                        child: Container(
+                          padding: EdgeInsets.all(12),
+                          decoration: BoxDecoration(
+                            color: Color(0xFFA764FF),
+                            borderRadius: BorderRadius.circular(15),
+                          ),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              Text(
+                                'Daily Total',
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.white,
+                                ),
+                              ),
+                              SizedBox(height: 8),
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                children: [
+                                  _buildNutrientInfo('Calories', '${dailyTotals['calories']}', Colors.white),
+                                  _buildNutrientInfo('Protein', '${dailyTotals['protein'].toStringAsFixed(1)}g', Colors.white),
+                                  _buildNutrientInfo('Carbs', '${dailyTotals['carbs'].toStringAsFixed(1)}g', Colors.white),
+                                  _buildNutrientInfo('Fat', '${dailyTotals['fat'].toStringAsFixed(1)}g', Colors.white),
+                                ],
+                              ),
+                            ],
                           ),
                         ),
-                        SizedBox(height: 8),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                          children: [
-                            _buildNutrientInfo('Calories', '${dailyTotals['calories']}', Colors.white),
-                            _buildNutrientInfo('Protein', '${dailyTotals['protein'].toStringAsFixed(1)}g', Colors.white),
-                            _buildNutrientInfo('Carbs', '${dailyTotals['carbs'].toStringAsFixed(1)}g', Colors.white),
-                            _buildNutrientInfo('Fat', '${dailyTotals['fat'].toStringAsFixed(1)}g', Colors.white),
-                          ],
+                      ),
+                      
+                      SizedBox(width: 10),
+                      
+                      // AI Analysis Button
+                      Expanded(
+                        flex: 1,
+                        child: GestureDetector(
+                          onTap: _navigateToAIAnalysis,
+                          child: Container(
+                            height: 84, // Match the height of Daily Total container
+                            padding: EdgeInsets.all(10),
+                            decoration: BoxDecoration(
+                              color: Color(0xFF879FFF),
+                              borderRadius: BorderRadius.circular(15),
+                            ),
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Icon(
+                                  Icons.analytics_outlined,
+                                  color: Colors.white,
+                                  size: 30,
+                                ),
+                                SizedBox(height: 5),
+                                Text(
+                                  'AI Analysis',
+                                  style: TextStyle(
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.white,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
                         ),
-                      ],
-                    ),
+                      ),
+                    ],
                   ),
                   
                   SizedBox(height: 20),
