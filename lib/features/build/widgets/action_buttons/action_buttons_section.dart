@@ -12,11 +12,11 @@ class ActionButtonsSection extends StatelessWidget {
         Row(
           children: [
             Expanded(
-              child: ActionButton(text: "Choose a Program", onPressed: () {Navigator.pushNamed(context, Routes.chooseProgram);}),
+              child: ActionButton(text: "Choose Program", onPressed: () {Navigator.pushNamed(context, Routes.chooseProgram);}),
             ),
             SizedBox(width: 12),
             Expanded(
-              child: ActionButton(text: "Build a Program", onPressed: () {Navigator.pushNamed(context, Routes.buildProgram);}),
+              child: ActionButton(text: "Build Program", onPressed: () {Navigator.pushNamed(context, Routes.buildProgram);}),
             ),
           ],
         ),

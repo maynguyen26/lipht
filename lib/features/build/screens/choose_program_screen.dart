@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:lipht/features/build/widgets/choose_inputs/program_card.dart';
+import 'package:lipht/features/build/screens/enter_workout_screen.dart';
+import 'package:lipht/presentation/screens/main_layout.dart';
 
 class ChooseProgramScreen extends StatelessWidget {
   const ChooseProgramScreen({super.key});
@@ -70,16 +72,20 @@ class ChooseProgramScreen extends StatelessWidget {
               return ProgramCard(
                 program: programs[index],
                 onSelect: () {
-                  // TODO: define what happens when the user selects this program
-                  // For now, you can just log or navigate
-                  print("Selected program: ${programs[index]['name']}");
-                  
-                  // Example if you want to navigate:
-                  // Navigator.pushNamed(context, '/enterWorkout', arguments: programs[index]);
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (_) => MainLayout(
+                        currentIndex: 1,
+                        child: EnterWorkoutScreen(program: programs[index]),
+                      ),
+                    ),
+                  );
                 },
               );
             },
           );
+
         },
       ),
     );

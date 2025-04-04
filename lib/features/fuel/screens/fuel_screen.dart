@@ -520,13 +520,13 @@ class _FuelScreenState extends State<FuelScreen> {
                                 Icon(
                                   Icons.analytics_outlined,
                                   color: Colors.white,
-                                  size: 30,
+                                  size: 25,
                                 ),
                                 SizedBox(height: 5),
                                 Text(
                                   'AI Analysis',
                                   style: TextStyle(
-                                    fontSize: 14,
+                                    fontSize: 12,
                                     fontWeight: FontWeight.bold,
                                     color: Colors.white,
                                   ),

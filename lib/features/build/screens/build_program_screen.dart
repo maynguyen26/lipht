@@ -89,7 +89,7 @@ class _BuildProgramScreenState extends State<BuildProgramScreen> {
         backgroundColor: const Color(0xFFF9EDFF),
         elevation: 0,
         title: const Text(
-          'Build a New Program',
+          'Build New Program',
 
           style: TextStyle(
             color: Color(0xFFDDA7F6),
