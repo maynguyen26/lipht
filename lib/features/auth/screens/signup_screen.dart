@@ -28,18 +28,22 @@ class _SignupScreenState extends State<SignupScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Container(
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-            colors: [
-              Color(0xFFA7B9FF), // Top color
-              Color(0xFFB482F6), // Bottom color
-            ],
-          ),
+return Scaffold(
+  body: ConstrainedBox(
+    constraints: BoxConstraints(
+      minHeight: MediaQuery.of(context).size.height,
+    ),
+    child: Container(
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          begin: Alignment.topCenter,
+          end: Alignment.bottomCenter,
+          colors: [
+            Color(0xFFA7B9FF), // Top color
+            Color(0xFFB482F6), // Bottom color
+          ],
         ),
+      ),
         child: SafeArea(
           child: SingleChildScrollView(
             child: Padding(
@@ -229,6 +233,7 @@ class _SignupScreenState extends State<SignupScreen> {
             ),
           ),
         ),
+      ),
       ),
     );
   }
