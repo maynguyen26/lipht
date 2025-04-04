@@ -2,8 +2,8 @@ import 'package:flutter/foundation.dart';
 import 'package:lipht/core/services/auth_service.dart';
 import 'package:lipht/data/models/user_model.dart';
 import 'package:google_sign_in/google_sign_in.dart';
-import 'package:lipht/main.dart'; 
-import 'package:lipht/routes/routes.dart'; 
+import 'package:lipht/main.dart';
+import 'package:lipht/routes/routes.dart';
 
 class AuthProvider extends ChangeNotifier {
   final AuthService _authService;
