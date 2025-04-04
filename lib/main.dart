@@ -4,6 +4,8 @@ import 'firebase_options.dart';
 import 'package:provider/provider.dart';
 import 'package:lipht/core/services/auth_service.dart';
 import 'package:lipht/providers/auth_provider.dart';
+import 'package:lipht/providers/friend_provider.dart';
+import 'package:lipht/data/repositories/friend_repository.dart';
 import 'package:lipht/providers/app_state_provider.dart';
 import 'package:lipht/routes/router.dart';
 import 'package:lipht/features/auth/screens/login_screen.dart';
@@ -12,7 +14,6 @@ import 'package:lipht/presentation/screens/main_layout.dart';
 import 'package:lipht/presentation/widgets/no_transitions_builder.dart';
 import 'package:lipht/features/fuel/screens/fuel_screen.dart';
 
-// Global navigator key for app-wide navigation
 final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 
 void main() async {
@@ -28,9 +29,34 @@ void main() async {
         ChangeNotifierProvider(
           create: (context) {
             final provider = AuthProvider(AuthService());
-            // Initialize the auth state listener right when provider is created
             provider.initAuthStateListener();
             return provider;
+          },
+        ),
+        Provider<FriendRepository>(
+          create: (_) => FriendRepository(), 
+        ),
+        ChangeNotifierProxyProvider<AuthProvider, FriendProvider?>(
+          create: (context) {
+            final friendRepo = context.read<FriendRepository>();
+            return null;
+          },
+          update: (context, authProvider, previousFriendProvider) {
+            final userId = authProvider.user?.id;
+            if (userId != null) {
+              final friendRepo = context.read<FriendRepository>();
+              if (previousFriendProvider == null ||
+                  previousFriendProvider.userId != userId) {
+
+                return FriendProvider(friendRepo, userId);
+              } else {
+                return previousFriendProvider;
+              }
+            } else {
+              print(
+                  "ProxyProvider: Returning null FriendProvider (no user ID)");
+              return null;
+            }
           },
         ),
       ],
@@ -45,7 +71,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      navigatorKey: navigatorKey, // Set the navigator key
+      navigatorKey: navigatorKey, 
       title: 'LIPHT Fitness',
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
