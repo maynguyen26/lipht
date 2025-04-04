@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:lipht/features/build/widgets/exercise_tracking/exercise_tracking_card.dart';
 import 'package:lipht/features/build/widgets/pie_chart_metrics/pie_chart_card.dart';
 import 'package:lipht/features/build/widgets/action_buttons/action_buttons_section.dart';
+import 'package:lipht/features/build/widgets/exercise_tracking/weekly_weight_chart.dart';
 
 class BuildScreen extends StatelessWidget {
   const BuildScreen({Key? key}) : super(key: key);
@@ -20,8 +21,7 @@ class BuildScreen extends StatelessWidget {
             
             SizedBox(height: 20),
             
-            // Pie Charts section in a card
-            PieChartCard(),
+            WeeklyWeightChart(),
             
             SizedBox(height: 20),
             
