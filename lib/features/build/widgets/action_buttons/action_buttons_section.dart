@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'action_button.dart';
+import 'package:lipht/routes/routes.dart';
 
 class ActionButtonsSection extends StatelessWidget {
   const ActionButtonsSection({Key? key}) : super(key: key);
@@ -9,18 +10,18 @@ class ActionButtonsSection extends StatelessWidget {
     return Column(
       children: [
         Row(
-          children: const [
+          children: [
             Expanded(
-              child: ActionButton(text: "Choose Program"),
+              child: ActionButton(text: "Choose Program", onPressed: () {Navigator.pushNamed(context, Routes.chooseProgram);}),
             ),
             SizedBox(width: 12),
             Expanded(
-              child: ActionButton(text: "Build a Program"),
+              child: ActionButton(text: "Build Program", onPressed: () {Navigator.pushNamed(context, Routes.buildProgram);}),
             ),
           ],
         ),
         const SizedBox(height: 16),
-        const ActionButton(text: "Empty Session"),
+        ActionButton(text: "Empty Session", onPressed: () {Navigator.pushNamed(context, Routes.emptySession);}),
       ],
     );
   }

@@ -1,0 +1,2 @@
+C:/code/lipht/android/app/.cxx/Debug/2p1o1c4w/x86/CMakeFiles/edit_cache.dir
+C:/code/lipht/android/app/.cxx/Debug/2p1o1c4w/x86/CMakeFiles/rebuild_cache.dir
