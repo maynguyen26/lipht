@@ -42,7 +42,7 @@ class _AIAnalysisScreenState extends State<AIAnalysisScreen> {
       // Prepare the meal data for the API
       final mealSummary = _prepareMealDataSummary();
       
-      // API endpoint - this would typically be your own server endpoint that handles the API key securely
+      // APi
       final response = await http.post(
         Uri.parse('https://api.openai.com/v1/chat/completions'),
         headers: {
