@@ -4,158 +4,142 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:intl/intl.dart';
 
-class WeeklyWeightChart extends StatefulWidget {
-  const WeeklyWeightChart({Key? key}) : super(key: key);
+class WeeklyWeightChart extends StatelessWidget {
+  const WeeklyWeightChart({super.key});
 
-  @override
-  State<WeeklyWeightChart> createState() => _WeeklyWeightChartState();
-}
-
-class _WeeklyWeightChartState extends State<WeeklyWeightChart> {
-  final _auth = FirebaseAuth.instance;
-  final _firestore = FirebaseFirestore.instance;
-  List<FlSpot> _weightSpots = [];
-  bool _isLoading = true;
-
-  @override
-  void initState() {
-    super.initState();
-    _fetchWeightData();
-  }
-
-  Future<void> _fetchWeightData() async {
-    final user = _auth.currentUser;
-    if (user == null) return;
+  Stream<List<Map<String, dynamic>>> _weightStream() {
+    final user = FirebaseAuth.instance.currentUser;
+    if (user == null) return const Stream.empty();
 
     final now = DateTime.now();
-    final startDate = now.subtract(const Duration(days: 6));
-    final dateLabels = List.generate(7, (i) => DateFormat('yyyy-MM-dd').format(startDate.add(Duration(days: i))));
-    final Map<String, double> dateToWeight = { for (var d in dateLabels) d: 0 };
+    final start = now.subtract(const Duration(days: 6));
+    final startDateStr = DateFormat('yyyy-MM-dd').format(start);
 
-    final snapshot = await _firestore
+    return FirebaseFirestore.instance
         .collection('users')
         .doc(user.uid)
         .collection('workoutLogs')
-        .where('date', isGreaterThanOrEqualTo: dateLabels.first)
-        .where('date', isLessThanOrEqualTo: dateLabels.last)
-        .get();
-
-    for (var doc in snapshot.docs) {
-      final date = doc['date'];
-      final exercises = doc['exercises'] as Map<String, dynamic>;
-
-      double dailyTotal = 0;
-      for (var sets in exercises.values) {
-        if (sets is List) {
-          for (var set in sets) {
-            final weight = double.tryParse(set['weight'] ?? '0') ?? 0;
-            final reps = double.tryParse(set['reps'] ?? '0') ?? 0;
-            dailyTotal += weight * reps;
-          }
-        }
-      }
-
-      if (dateToWeight.containsKey(date)) {
-        dateToWeight[date] = dateToWeight[date]! + dailyTotal;
-      }
-    }
-
-    setState(() {
-      _weightSpots = dateLabels.asMap().entries.map((entry) {
-        final index = entry.key;
-        final date = entry.value;
-        return FlSpot(index.toDouble(), dateToWeight[date] ?? 0);
-      }).toList();
-      _isLoading = false;
-    });
+        .where('date', isGreaterThanOrEqualTo: startDateStr)
+        .snapshots()
+        .map((snapshot) => snapshot.docs.map((doc) => doc.data()).toList());
   }
 
   @override
   Widget build(BuildContext context) {
-    if (_isLoading) {
-      return const Center(child: CircularProgressIndicator(color: Color(0xFFA764FF)));
-    }
+    return StreamBuilder<List<Map<String, dynamic>>>(
+      stream: _weightStream(),
+      builder: (context, snapshot) {
+        if (!snapshot.hasData) {
+          return const Center(child: CircularProgressIndicator());
+        }
 
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        const Text(
-          "Weekly Weight Lifted",
-          style: TextStyle(
-            fontSize: 18,
-            fontWeight: FontWeight.bold,
-            color: Color(0xFFA764FF),
-          ),
-        ),
-        const SizedBox(height: 12),
-        Container(
-          padding: const EdgeInsets.all(16),
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(24),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.purple.shade50,
-                blurRadius: 6,
-                spreadRadius: 1,
+        final workouts = snapshot.data!;
+        final Map<String, double> totals = {};
+
+        for (int i = 6; i >= 0; i--) {
+          final date = DateTime.now().subtract(Duration(days: i));
+          final day = DateFormat('EEE').format(date);
+          totals[day] = 0;
+        }
+
+        for (final workout in workouts) {
+          final dateStr = workout['date'] as String;
+          final date = DateTime.tryParse(dateStr);
+          if (date == null) continue;
+
+          final day = DateFormat('EEE').format(date);
+
+          if (totals.containsKey(day)) {
+            final exercises = Map<String, dynamic>.from(workout['exercises']);
+            double totalWeight = 0;
+
+            for (final sets in exercises.values) {
+              for (final set in sets) {
+                final weight = double.tryParse(set['weight'] ?? '') ?? 0;
+                final reps = double.tryParse(set['reps'] ?? '') ?? 0;
+                totalWeight += weight * reps;
+              }
+            }
+
+            totals[day] = (totals[day] ?? 0) + totalWeight;
+          }
+        }
+
+        final List<FlSpot> spots = [];
+        final dayLabels = totals.keys.toList();
+        for (int i = 0; i < dayLabels.length; i++) {
+          spots.add(FlSpot(i.toDouble(), totals[dayLabels[i]] ?? 0));
+        }
+
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Text(
+              "Weekly Weight Lifted (lbs)",
+              style: TextStyle(
+                fontWeight: FontWeight.bold,
+                fontSize: 18,
+                color: Color(0xFFA764FF),
               ),
-            ],
-          ),
-          child: _weightSpots.isEmpty
-              ? const Text("No weight data this week.")
-              : SizedBox(
-                  height: 220,
-                  child: LineChart(
-                    LineChartData(
-                      minY: 0,
-                      titlesData: FlTitlesData(
-                        bottomTitles: AxisTitles(
-                          sideTitles: SideTitles(
-                            showTitles: true,
-                            getTitlesWidget: (value, meta) {
-                              final day = DateTime.now().subtract(Duration(days: 6 - value.toInt()));
-                              return Text(
-                                DateFormat('E').format(day),
-                                style: const TextStyle(fontSize: 12, color: Color(0xFFA764FF)),
-                              );
-                            },
+            ),
+            const SizedBox(height: 12),
+            SizedBox(
+              height: 245,
+              child: LineChart(
+                LineChartData(
+                  minY: 0,
+                  gridData: FlGridData(show: true),
+                  titlesData: FlTitlesData(
+                    leftTitles: AxisTitles(
+                    sideTitles: SideTitles(
+                      showTitles: true,
+                      reservedSize: 54,
+                      getTitlesWidget: (value, _) => Padding(
+                        padding: const EdgeInsets.only(right: 8),
+                        child: Text(
+                          '${value.toInt()}',
+                          style: const TextStyle(
+                            fontSize: 11,
+                            fontWeight: FontWeight.w500,
                           ),
                         ),
-                        leftTitles: AxisTitles(
-                          sideTitles: SideTitles(
-                            showTitles: true,
-                            reservedSize: 48,
-                            getTitlesWidget: (value, _) {
-                              if (value == 0 || value % 100 == 0) {
-                                return Text('${value.toInt()}kg', style: const TextStyle(fontSize: 11, color: Color(0xFFA764FF)));
-                              }
-                              return const SizedBox();
-                            },
-                          ),
-                        ),
-                        rightTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
-                        topTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
                       ),
-                      gridData: FlGridData(show: true, drawVerticalLine: false),
-                      borderData: FlBorderData(show: false),
-                      lineBarsData: [
-                        LineChartBarData(
-                          spots: _weightSpots,
-                          isCurved: true,
-                          color: const Color(0xFFA764FF),
-                          barWidth: 3,
-                          dotData: FlDotData(show: true),
-                          belowBarData: BarAreaData(
-                            show: true,
-                            color: const Color(0xFFA764FF).withOpacity(0.3),
-                          ),
-                        ),
-                      ],
                     ),
                   ),
+
+                    bottomTitles: AxisTitles(
+                      sideTitles: SideTitles(
+                        showTitles: true,
+                        getTitlesWidget: (value, _) {
+                          if (value.toInt() < dayLabels.length) {
+                            return Text(dayLabels[value.toInt()]);
+                          }
+                          return const Text('');
+                        },
+                      ),
+                    ),
+                    rightTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
+                    topTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
+                  ),
+                  borderData: FlBorderData(show: false),
+                  lineBarsData: [
+                    LineChartBarData(
+                      spots: spots,
+                      isCurved: true,
+                      color: const Color(0xFFA764FF),
+                      barWidth: 3,
+                      belowBarData: BarAreaData(
+                        show: true,
+                        color: const Color(0xFFA764FF).withOpacity(0.3),
+                      ),
+                    ),
+                  ],
                 ),
-        ),
-      ],
+              ),
+            ),
+          ],
+        );
+      },
     );
   }
 }

@@ -35,7 +35,7 @@ class ProgramNameCard extends StatelessWidget {
           ),
           const Spacer(),
           SizedBox(
-            width: 160, // you can tweak this
+            width: 160,
             child: TextField(
               controller: controller,
               textAlign: TextAlign.right,

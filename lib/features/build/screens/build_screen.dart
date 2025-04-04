@@ -25,7 +25,6 @@ class BuildScreen extends StatelessWidget {
             
             SizedBox(height: 20),
             
-            // Action buttons
             ActionButtonsSection(),
           ],
         ),

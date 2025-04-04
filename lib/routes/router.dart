@@ -6,7 +6,7 @@ import 'package:lipht/features/settings/screens/settings_screen.dart';
 import 'package:lipht/features/build/screens/build_screen.dart';
 import 'package:lipht/features/build/screens/build_program_screen.dart';
 import 'package:lipht/features/build/screens/choose_program_screen.dart';
-import 'package:lipht/features/build/screens/empty_session_screen.dart';
+import 'package:lipht/features/build/screens/workout_history_screen.dart';
 import 'package:lipht/routes/routes.dart';
 
 class AppRouter {
@@ -64,11 +64,11 @@ class AppRouter {
           ),
         );
 
-        case Routes.emptySession:
+        case Routes.workoutHistory:
         return MaterialPageRoute(
           builder: (_) => const MainLayout(
             currentIndex: 1,
-            child: EmptySessionScreen(),
+            child: WorkoutHistoryScreen(),
           ),
         );
 

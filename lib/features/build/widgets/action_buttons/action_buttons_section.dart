@@ -21,7 +21,7 @@ class ActionButtonsSection extends StatelessWidget {
           ],
         ),
         const SizedBox(height: 16),
-        ActionButton(text: "Empty Session", onPressed: () {Navigator.pushNamed(context, Routes.emptySession);}),
+        ActionButton(text: "Workout History", onPressed: () {Navigator.pushNamed(context, Routes.workoutHistory);}),
       ],
     );
   }

@@ -19,7 +19,7 @@ class ProgressText extends StatelessWidget {
           ),
         ),
         const Text(
-          "This week",
+          "this week",
           style: TextStyle(
             fontSize: 14,
             color: Color(0xFFA764FF),

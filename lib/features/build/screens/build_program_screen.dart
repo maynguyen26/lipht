@@ -59,7 +59,6 @@ class _BuildProgramScreenState extends State<BuildProgramScreen> {
         SnackBar(content: Text("Program saved!")),
       );
 
-      // Optional: clear the form
       _programNameController.clear();
       _exerciseControllers.clear();
       _selectedDays.clear();

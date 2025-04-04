@@ -13,7 +13,7 @@ class Routes {
   static const String build = '/build';
   static const String buildProgram = '/build/program';
   static const String chooseProgram = '/build/choose';
-  static const String emptySession = '/build/empty';
+  static const String workoutHistory = '/build/workout';
 
   // Nutrition routes
   static const String fuel = '/fuel';
